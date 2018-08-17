@@ -6,10 +6,11 @@ class Conv1x1_BN(nn.Module):
     1x1 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
     """
 
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, stride=1):
         super()
         self.in_channels = in_channels
         self.out_channel = out_channels
+        self.stride = stride
 
         self.net = self.get_network()
 
@@ -21,6 +22,7 @@ class Conv1x1_BN(nn.Module):
         layers.append(nn.Conv2d(in_channels=self.in_channels,
                                 out_channels=self.out_channels,
                                 kernel_size=1,
+                                stride=self.stride,
                                 bias=False))
         layers.append(nn.BatchNorm2d(num_features=self.out_channels))
 
@@ -86,7 +88,7 @@ class BasicBlock(Block):
     Basic residual block
     """
 
-    expansion = 1
+    expand = 1
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super().__init__(in_channels, out_channels, stride, downsample)
@@ -138,7 +140,7 @@ class BasicBlock(Block):
 
 class BottleneckBlock(Block):
 
-    expansion = 4
+    expand = 4
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super().__init__(in_channels, out_channels, stride, downsample)
@@ -207,16 +209,20 @@ class ResNet(nn.Module):
 
     """ResNet Architecture"""
 
-    def __init__(self, channels, class_count):
+    def __init__(self, block, layer_count, channels, class_count):
         super(ResNet, self).__init__()
+        self.in_channels = 64
+        self.block = block
+        self.layer_count = layer_count
         self.channels = channels
         self.class_count = class_count
 
-        self.net = self.get_network()
+        self.conv_net = self.get_conv_net()
+        self.fc_net = self.get_fc_net()
 
-    def get_network(self):
+    def get_conv_net(self):
         """
-        returns the structure of the network
+        returns the convolutional layers of the network
         """
         layers = []
         in_channels = self.channels
@@ -232,8 +238,46 @@ class ResNet(nn.Module):
         layers.append(nn.ReLU(inplace=True))
         layers.append(nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
 
+        layers.append(self.make_layer(block=self.block,
+                                      out_channels=64,
+                                      count=self.layer_count[0]))
+        layers.append(self.make_layer(block=self.block,
+                                      out_channels=128,
+                                      count=self.layer_count[1]))
+        layers.append(self.make_layer(block=self.block,
+                                      out_channels=256,
+                                      count=self.layer_count[2]))
+        layers.append(self.make_layer(block=self.block,
+                                      out_channels=512,
+                                      count=self.layer_count[3]))
+        layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
+
+    def make_layer(self, block, out_channels, count, stride=1):
+        downsample = None
+        if (stride != 1 or self.in_channels != out_channels * block.expansion):
+            downsample = Conv1x1_BN(in_channels=self.in_channels,
+                                    out_channels=out_channels * block.expand,
+                                    stride=stride)
+
+        layers = []
+        layers.append(block(in_channels=self.in_channels,
+                            out_channels=out_channels,
+                            stride=stride,
+                            downsample=downsample))
+        self.in_channels = self.out_channels * block.expand
+        for i in range(1, count):
+            layers.append(block(self.in_channels, out_channels))
+
+        return nn.Sequential(*layers)
+
+    def get_fc_net(self):
+        return nn.Linear(512 * self.block.expand, self.class_count)
+
     def forward(self, x):
         """
         feed forward
         """
-        pass  # TODO:
+        y = self.conv_net(x)
+        y = y.view(-1, y.size(1) * y.size(2) * y.size(3))
+        y = self.fc_net(y)
+        return y
