@@ -6,7 +6,7 @@ class Conv1x1_BN(nn.Module):
     def __init__(self, in_channels, out_channels):
         super()
         self.in_channels = in_channels
-        self.out_channels = object
+        self.out_channel = out_channels
 
         self.net = self.get_network()
 
@@ -68,6 +68,8 @@ class BasicBlock(Block):
     Basic residual block
     """
 
+    expansion = 1
+
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super().__init__(in_channels, out_channels, stride, downsample)
 
@@ -109,11 +111,57 @@ class BasicBlock(Block):
 
 class BottleneckBlock(Block):
 
+    expansion = 4
+
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super().__init__(in_channels, out_channels, stride, downsample)
 
+        self.conv1 = self.get_conv1()
+        self.conv2 = self.get_conv2()
+        self.conv3 = self.get_conv3()
+        self.ReLU = nn.ReLU(inplace=True)
+
     def get_conv1(self):
         layers = []
+
+        layers.append(Conv1x1_BN(in_channels=self.in_channels,
+                                 out_channels=self.out_channels))
+        layers.append(nn.ReLU(inplace=True))
+
+        return nn.Sequential(*layers)
+
+    def get_conv2(self):
+        layers = []
+
+        layers.append(Conv3x3_BN(in_channels=self.out_channels,
+                                 out_channels=self.out_channels,
+                                 stride=self.stride,
+                                 downsample=self.downsample))
+        layers.append(nn.ReLU(inplace=True))
+
+        return nn.Sequential(*layers)
+
+    def get_conv3(self):
+        layers = []
+
+        layers.append(Conv1x1_BN(in_channels=self.out_channels,
+                                 out_channels=self.out_channels *
+                                 BottleneckBlock.expansion))
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        y = self.conv1(x)
+        y = self.conv2(y)
+        y = self.conv3(y)
+
+        if self.downsample is not None:
+            x = self.downsample(x)
+
+        y += x
+        y = self.ReLU(y)
+
+        return y
 
 
 class ResNet(nn.Module):
