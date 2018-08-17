@@ -1,6 +1,29 @@
 import torch.nn as nn
 
 
+class Conv1x1_BN(nn.Module):
+
+    def __init__(self, in_channels, out_channels):
+        super()
+        self.in_channels = in_channels
+        self.out_channels = object
+
+        self.net = self.get_network()
+
+    def get_network(self):
+        layers = []
+        layers.append(nn.Conv2d(in_channels=self.in_channels,
+                                out_channels=self.out_channels,
+                                kernel_size=1,
+                                bias=False))
+        layers.append(nn.BatchNorm2d(num_features=self.out_channels))
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.net(x)
+
+
 class Conv3x3_BN(nn.Module):
 
     def __init__(self, in_channels, out_channels, stride):
@@ -20,6 +43,7 @@ class Conv3x3_BN(nn.Module):
                                 padding=1,
                                 bias=False))
         layers.append(nn.BatchNorm2d(num_features=self.out_channels))
+
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -81,6 +105,15 @@ class BasicBlock(Block):
         y = self.relu(y)
 
         return y
+
+
+class BottleneckBlock(Block):
+
+    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
+        super().__init__(in_channels, out_channels, stride, downsample)
+
+    def get_conv1(self):
+        layers = []
 
 
 class ResNet(nn.Module):
