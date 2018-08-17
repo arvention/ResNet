@@ -2,6 +2,9 @@ import torch.nn as nn
 
 
 class Conv1x1_BN(nn.Module):
+    """
+    1x1 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
+    """
 
     def __init__(self, in_channels, out_channels):
         super()
@@ -11,6 +14,9 @@ class Conv1x1_BN(nn.Module):
         self.net = self.get_network()
 
     def get_network(self):
+        """
+        returns the structure of the block
+        """
         layers = []
         layers.append(nn.Conv2d(in_channels=self.in_channels,
                                 out_channels=self.out_channels,
@@ -21,10 +27,16 @@ class Conv1x1_BN(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        feed forward
+        """
         return self.net(x)
 
 
 class Conv3x3_BN(nn.Module):
+    """
+    3x3 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
+    """
 
     def __init__(self, in_channels, out_channels, stride):
         super()
@@ -35,6 +47,9 @@ class Conv3x3_BN(nn.Module):
         self.net = self.get_network()
 
     def get_network(self):
+        """
+        returns the structure of the block
+        """
         layers = []
         layers.append(nn.Conv2d(in_channels=self.in_channels,
                                 out_channels=self.out_channels,
@@ -47,6 +62,9 @@ class Conv3x3_BN(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        feed forward
+        """
         return self.net(x)
 
 
@@ -78,6 +96,9 @@ class BasicBlock(Block):
         self.relu = nn.ReLU(inplace=True)
 
     def get_conv1(self):
+        """
+        returns the first convolution in the basic residual block
+        """
         layers = []
 
         layers.append(Conv3x3_BN(in_channels=self.in_channels,
@@ -88,6 +109,9 @@ class BasicBlock(Block):
         return nn.Sequential(*layers)
 
     def get_conv2(self):
+        """
+        returns the second convolution in the basic residual block
+        """
         layers = []
 
         layers.append(Conv3x3_BN(in_channels=self.out_channels,
@@ -97,6 +121,9 @@ class BasicBlock(Block):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        feed forward
+        """
         y = self.conv1(x)
         y = self.conv2(y)
 
@@ -122,6 +149,9 @@ class BottleneckBlock(Block):
         self.ReLU = nn.ReLU(inplace=True)
 
     def get_conv1(self):
+        """
+        returns the first convolution in the bottleneck residual block
+        """
         layers = []
 
         layers.append(Conv1x1_BN(in_channels=self.in_channels,
@@ -131,6 +161,9 @@ class BottleneckBlock(Block):
         return nn.Sequential(*layers)
 
     def get_conv2(self):
+        """
+        returns the second convolution in the bottleneck residual block
+        """
         layers = []
 
         layers.append(Conv3x3_BN(in_channels=self.out_channels,
@@ -142,6 +175,9 @@ class BottleneckBlock(Block):
         return nn.Sequential(*layers)
 
     def get_conv3(self):
+        """
+        returns the first convolution in the bottleneck residual block
+        """
         layers = []
 
         layers.append(Conv1x1_BN(in_channels=self.out_channels,
@@ -151,6 +187,9 @@ class BottleneckBlock(Block):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        feed forward
+        """
         y = self.conv1(x)
         y = self.conv2(y)
         y = self.conv3(y)
@@ -194,4 +233,7 @@ class ResNet(nn.Module):
         layers.append(nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
 
     def forward(self, x):
+        """
+        feed forward
+        """
         pass  # TODO:
