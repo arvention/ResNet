@@ -255,13 +255,16 @@ class ResNet(nn.Module):
                                       count=self.layer_count[0]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=128,
-                                      count=self.layer_count[1]))
+                                      count=self.layer_count[1],
+                                      stride=2))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=256,
-                                      count=self.layer_count[2]))
+                                      count=self.layer_count[2],
+                                      stride=2))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=512,
-                                      count=self.layer_count[3]))
+                                      count=self.layer_count[3],
+                                      stride=2))
         layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
 
         return nn.Sequential(*layers)
