@@ -255,16 +255,16 @@ class ResNet(nn.Module):
 
         layers.append(self.make_layer(block=self.block,
                                       out_channels=64,
-                                      count=self.layer_count[0]))
+                                      count=config[self.layer_count[0]]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=128,
-                                      count=self.layer_count[1]))
+                                      count=config[self.layer_count[1]]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=256,
-                                      count=self.layer_count[2]))
+                                      count=config[self.layer_count[2]]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=512,
-                                      count=self.layer_count[3]))
+                                      count=config[self.layer_count[3]]))
         layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
 
     def make_layer(self, block, out_channels, count, stride=1):
