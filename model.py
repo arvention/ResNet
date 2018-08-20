@@ -279,7 +279,7 @@ class ResNet(nn.Module):
                             out_channels=out_channels,
                             stride=stride,
                             downsample=downsample))
-        self.in_channels = self.out_channels * block.expand
+        self.in_channels = out_channels * block.expand
         for i in range(1, count):
             layers.append(block(self.in_channels, out_channels))
 
