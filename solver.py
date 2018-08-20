@@ -2,9 +2,12 @@ import os
 import torch
 import time
 import datetime
+import torch.n as nn
+import torch.optim as optim
+from tqdm import tqdm
 from utils import to_var
 
-from model import FasterRCNN
+from model import ResNet
 
 
 class Solver(object):
@@ -35,18 +38,25 @@ class Solver(object):
         """
 
         # instantiate Faster R-CNN model
-        self.model = FasterRCNN(self.input_channels, self.class_count)
+        self.model = ResNet(self.config,
+                            self.channels,
+                            self.class_count)
 
-        # TODO: instantiate loss criterion
+        # instantiate loss criterion
+        self.criterion = nn.CrossEntropyLoss()
 
         # TODO: instantiate optimizer
+        self.optimizer = optim.SGD(
+            self.model.parameters(),
+            lr=self.lr,
+            momentum=self.momentum)
 
         # print network
-        self.print_network(self.model, 'Faster R-CNN')
+        self.print_network(self.model, 'ResNet')
 
         if torch.cuda.is_available() and self.use_gpu:
             self.model.cuda()
-            # TODO: set criterion to cuda
+            self.criterion.cuda()
 
     def print_network(self, model, name):
         """
@@ -111,8 +121,41 @@ class Solver(object):
         """
         Training process
         """
-        # TODO: add training process
-        pass
+        self.losses = []
+        self.top_1_acc = []
+        self.top_5_acc = []
+
+        iters_per_epoch = len(self.data_loader)
+
+        # start with a trained model if exists
+        if self.pretrained_model:
+            start = int(self.pretrained_model.split('_')[1]) - 1
+        else:
+            start = 0
+
+        # start training
+        start_time = time.time()
+        for e in range(start, self.num_epochs):
+            for i, (images, labels) in enumerate(tqdm(self.data_loader)):
+                images = to_var(images, self.use_gpu)
+                labels = to_var(labels, self.use_gpu)
+
+                loss = self.model_step(images, labels)
+
+            # print out log loss
+            if (e + 1) % self.loss_log_step == 0:
+                self.print_loss_log(start_time, iters_per_epoch, e, i, loss)
+                self.losses.append((e, loss))
+
+            # save model
+            if (e + 1) % self.model_save_step == 0:
+                self.save_model(e, i)
+
+            # evaluate on train dataset
+            if (e + 1) % self.train_eval_step == 0:
+                top_1_acc, top_5_acc = self.train_evaluate(e)
+                self.top_1_acc.append((e, top_1_acc))
+                self.top_5_acc.append((e, top_5_acc))
 
     def model_step(self, images, labels):
         """
