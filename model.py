@@ -211,7 +211,7 @@ class BottleneckBlock(Block):
 different configurations of ResNet
 """
 
-config = {
+configs = {
     '18': [BasicBlock, 2, 2, 2, 2],
     '34': [BasicBlock, 3, 4, 6, 3],
     '50': [BottleneckBlock, 3, 4, 6, 3],
@@ -227,8 +227,8 @@ class ResNet(nn.Module):
     def __init__(self, config, channels, class_count):
         super(ResNet, self).__init__()
         self.in_channels = 64
-        self.block = config[0]
-        self.layer_count = config[1:]
+        self.block = configs[config][0]
+        self.layer_count = configs[config][1:]
         self.channels = channels
         self.class_count = class_count
 
@@ -255,16 +255,16 @@ class ResNet(nn.Module):
 
         layers.append(self.make_layer(block=self.block,
                                       out_channels=64,
-                                      count=config[self.layer_count[0]]))
+                                      count=self.layer_count[0]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=128,
-                                      count=config[self.layer_count[1]]))
+                                      count=self.layer_count[1]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=256,
-                                      count=config[self.layer_count[2]]))
+                                      count=self.layer_count[2]))
         layers.append(self.make_layer(block=self.block,
                                       out_channels=512,
-                                      count=config[self.layer_count[3]]))
+                                      count=self.layer_count[3]))
         layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
 
     def make_layer(self, block, out_channels, count, stride=1):
