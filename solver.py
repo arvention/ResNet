@@ -49,7 +49,8 @@ class Solver(object):
         self.optimizer = optim.SGD(
             self.model.parameters(),
             lr=self.lr,
-            momentum=self.momentum)
+            momentum=self.momentum
+        )
 
         # print network
         self.print_network(self.model, 'ResNet')
