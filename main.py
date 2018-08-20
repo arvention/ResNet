@@ -75,6 +75,8 @@ if __name__ == '__main__':
     parser.add_argument('--num_epochs', type=int, default=0)  # TODO
     parser.add_argument('--batch_size', type=int, default=0)  # TODO
     parser.add_argument('--pretrained_model', type=str, default=None)
+    parser.add_argument('--config', type=str, default='34',
+                        choices=['18', '34', '50', '101', '152'])
 
     # misc
     parser.add_argument('--mode', type=str, default='train',
