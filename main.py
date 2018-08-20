@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     # dataset info
     parser.add_argument('--input_channels', type=int, default=3)
-    parser.add_argument('--class_count', type=int, default=0)
+    parser.add_argument('--class_count', type=int, default=256)
 
     # training settings
     parser.add_argument('--lr', type=float, default=0.1)
