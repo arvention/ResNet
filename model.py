@@ -109,8 +109,7 @@ class BasicBlock(nn.Module):
         layers = []
 
         layers.append(Conv3x3_BN(in_channels=self.out_channels,
-                                 out_channels=self.out_channels,
-                                 stride=self.stride))
+                                 out_channels=self.out_channels))
 
         return nn.Sequential(*layers)
 
@@ -169,8 +168,7 @@ class BottleneckBlock(nn.Module):
 
         layers.append(Conv3x3_BN(in_channels=self.out_channels,
                                  out_channels=self.out_channels,
-                                 stride=self.stride,
-                                 downsample=self.downsample))
+                                 stride=self.stride))
         layers.append(nn.ReLU(inplace=True))
 
         return nn.Sequential(*layers)
