@@ -7,7 +7,7 @@ class Conv1x1_BN(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, stride=1):
-        super()
+        super(Conv1x1_BN, self).__init__()
         self.in_channels = in_channels
         self.out_channel = out_channels
         self.stride = stride
@@ -41,7 +41,7 @@ class Conv3x3_BN(nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, stride):
-        super()
+        super(Conv3x3_BN, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.stride = stride
@@ -78,7 +78,7 @@ class BasicBlock(nn.Module):
     expand = 1
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super()
+        super(BasicBlock, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -137,7 +137,7 @@ class BottleneckBlock(nn.Module):
     expand = 4
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super()
+        super(BottleneckBlock, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
