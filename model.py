@@ -264,6 +264,8 @@ class ResNet(nn.Module):
                                       count=self.layer_count[3]))
         layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
 
+        return nn.Sequential(*layers)
+
     def make_layer(self, block, out_channels, count, stride=1):
         """
         returns layers based on the type of block
