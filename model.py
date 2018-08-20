@@ -40,7 +40,7 @@ class Conv3x3_BN(nn.Module):
     3x3 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
     """
 
-    def __init__(self, in_channels, out_channels, stride):
+    def __init__(self, in_channels, out_channels, stride=1):
         super(Conv3x3_BN, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
