@@ -139,7 +139,9 @@ class BasicBlock(Block):
 
 
 class BottleneckBlock(Block):
-
+    """
+    Bottleneck residual block
+    """
     expand = 4
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
@@ -253,6 +255,9 @@ class ResNet(nn.Module):
         layers.append(nn.AvgPool2d(kernel_size=7, stride=1))
 
     def make_layer(self, block, out_channels, count, stride=1):
+        """
+        returns layers based on the type of block
+        """
         downsample = None
         if (stride != 1 or self.in_channels != out_channels * block.expansion):
             downsample = Conv1x1_BN(in_channels=self.in_channels,
@@ -271,6 +276,9 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def get_fc_net(self):
+        """
+        returns the fully connected layers of the network
+        """
         return nn.Linear(512 * self.block.expand, self.class_count)
 
     def forward(self, x):
