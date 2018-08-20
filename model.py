@@ -70,20 +70,7 @@ class Conv3x3_BN(nn.Module):
         return self.net(x)
 
 
-class Block(nn.Module):
-    """
-    Block
-    """
-
-    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super()
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.stride = stride
-        self.downsample = downsample
-
-
-class BasicBlock(Block):
+class BasicBlock(nn.Module):
     """
     Basic residual block
     """
@@ -91,7 +78,12 @@ class BasicBlock(Block):
     expand = 1
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super().__init__(in_channels, out_channels, stride, downsample)
+        super()
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.stride = stride
+        self.downsample = downsample
 
         self.conv1 = self.get_conv1()
         self.conv2 = self.get_conv2()
@@ -138,14 +130,19 @@ class BasicBlock(Block):
         return y
 
 
-class BottleneckBlock(Block):
+class BottleneckBlock(nn.Module):
     """
     Bottleneck residual block
     """
     expand = 4
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super().__init__(in_channels, out_channels, stride, downsample)
+        super()
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.stride = stride
+        self.downsample = downsample
 
         self.conv1 = self.get_conv1()
         self.conv2 = self.get_conv2()
