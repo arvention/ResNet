@@ -1,6 +1,18 @@
 import torch.nn as nn
 
 
+"""
+different configurations of ResNet
+"""
+
+config = {
+    '18': [BasicBlock, 2, 2, 2, 2],
+    '34': [BasicBlock, 3, 4, 6, 3],
+    '50': [BottleneckBlock, 3, 4, 6, 3],
+    '101': [BottleneckBlock, 3, 4, 23, 3],
+    '152': [BottleneckBlock, 3, 8, 36, 3]
+}
+
 class Conv1x1_BN(nn.Module):
     """
     1x1 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
@@ -211,11 +223,11 @@ class ResNet(nn.Module):
 
     """ResNet Architecture"""
 
-    def __init__(self, block, layer_count, channels, class_count):
+    def __init__(self, config, channels, class_count):
         super(ResNet, self).__init__()
         self.in_channels = 64
-        self.block = block
-        self.layer_count = layer_count
+        self.block = config[0]
+        self.layer_count = config[1:]
         self.channels = channels
         self.class_count = class_count
 
