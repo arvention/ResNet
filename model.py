@@ -9,7 +9,7 @@ class Conv1x1_BN(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(Conv1x1_BN, self).__init__()
         self.in_channels = in_channels
-        self.out_channel = out_channels
+        self.out_channels = out_channels
         self.stride = stride
 
         self.net = self.get_network()
