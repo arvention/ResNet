@@ -230,6 +230,8 @@ class ResNet(nn.Module):
         self.conv_net = self.get_conv_net()
         self.fc_net = self.get_fc_net()
 
+        self.init_weights()
+
     def get_conv_net(self):
         """
         returns the convolutional layers of the network
@@ -293,6 +295,19 @@ class ResNet(nn.Module):
         returns the fully connected layers of the network
         """
         return nn.Linear(512 * self.block.expand, self.class_count)
+
+    def init_weights(self):
+        """
+        initializes weights for each layer
+        """
+        for module in self.modules():
+            if isinstance(module, nn.Conv2d):
+                nn.init.kaiming_normal_(module.weight,
+                                        mode='fan_out',
+                                        nonlinearity='relu')
+            elif isinstance(module, nn.BatchNorm2d):
+                nn.init.constant_(module.weight, 1)
+                nn.init.constant_(module.bias, 0)
 
     def forward(self, x):
         """
