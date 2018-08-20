@@ -2,7 +2,7 @@ import os
 import torch
 import time
 import datetime
-import torch.n as nn
+import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 from utils import to_var
