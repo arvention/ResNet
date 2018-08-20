@@ -186,7 +186,7 @@ class BottleneckBlock(Block):
 
         layers.append(Conv1x1_BN(in_channels=self.out_channels,
                                  out_channels=self.out_channels *
-                                 BottleneckBlock.expansion))
+                                 BottleneckBlock.expand))
 
         return nn.Sequential(*layers)
 
@@ -272,7 +272,7 @@ class ResNet(nn.Module):
         returns layers based on the type of block
         """
         downsample = None
-        if (stride != 1 or self.in_channels != out_channels * block.expansion):
+        if (stride != 1 or self.in_channels != out_channels * block.expand):
             downsample = Conv1x1_BN(in_channels=self.in_channels,
                                     out_channels=out_channels * block.expand,
                                     stride=stride)
