@@ -1,18 +1,6 @@
 import torch.nn as nn
 
 
-"""
-different configurations of ResNet
-"""
-
-config = {
-    '18': [BasicBlock, 2, 2, 2, 2],
-    '34': [BasicBlock, 3, 4, 6, 3],
-    '50': [BottleneckBlock, 3, 4, 6, 3],
-    '101': [BottleneckBlock, 3, 4, 23, 3],
-    '152': [BottleneckBlock, 3, 8, 36, 3]
-}
-
 class Conv1x1_BN(nn.Module):
     """
     1x1 Convolution with Batch Normalization for BasicBlock and BottleneckBlock
@@ -217,6 +205,19 @@ class BottleneckBlock(Block):
         y = self.ReLU(y)
 
         return y
+
+
+"""
+different configurations of ResNet
+"""
+
+config = {
+    '18': [BasicBlock, 2, 2, 2, 2],
+    '34': [BasicBlock, 3, 4, 6, 3],
+    '50': [BottleneckBlock, 3, 4, 6, 3],
+    '101': [BottleneckBlock, 3, 4, 23, 3],
+    '152': [BottleneckBlock, 3, 8, 36, 3]
+}
 
 
 class ResNet(nn.Module):
