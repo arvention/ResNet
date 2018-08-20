@@ -39,7 +39,7 @@ class Solver(object):
 
         # instantiate Faster R-CNN model
         self.model = ResNet(self.config,
-                            self.channels,
+                            self.input_channels,
                             self.class_count)
 
         # instantiate loss criterion
