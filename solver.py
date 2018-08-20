@@ -45,11 +45,12 @@ class Solver(object):
         # instantiate loss criterion
         self.criterion = nn.CrossEntropyLoss()
 
-        # TODO: instantiate optimizer
+        # instantiate optimizer
         self.optimizer = optim.SGD(
             self.model.parameters(),
             lr=self.lr,
-            momentum=self.momentum
+            momentum=self.momentum,
+            weight_decay=self.weight_decay
         )
 
         # print network
