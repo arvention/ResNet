@@ -37,7 +37,7 @@ class Solver(object):
         Instantiates the model, loss criterion, and optimizer
         """
 
-        # instantiate Faster R-CNN model
+        # instantiate ResNet model
         self.model = ResNet(self.config,
                             self.input_channels,
                             self.class_count)
