@@ -101,8 +101,7 @@ class Solver(object):
                                     self.num_epochs,
                                     i + 1,
                                     iters_per_epoch,
-                                    loss
-                                    )
+                                    loss)
 
         # TODO: add tensorboard
 
