@@ -37,7 +37,7 @@ class Solver(object):
         Instantiates the model, loss criterion, and optimizer
         """
 
-        # instantiate ResNet model
+        # instantiate model
         self.model = ResNet(self.config,
                             self.input_channels,
                             self.class_count)
@@ -46,16 +46,15 @@ class Solver(object):
         self.criterion = nn.CrossEntropyLoss()
 
         # instantiate optimizer
-        self.optimizer = optim.SGD(
-            self.model.parameters(),
-            lr=self.lr,
-            momentum=self.momentum,
-            weight_decay=self.weight_decay
-        )
+        self.optimizer = optim.SGD(self.model.parameters(),
+                                   lr=self.lr,
+                                   momentum=self.momentum,
+                                   weight_decay=self.weight_decay)
 
         # print network
         self.print_network(self.model, 'ResNet')
 
+        # use gpu if enabled
         if torch.cuda.is_available() and self.use_gpu:
             self.model.cuda()
             self.criterion.cuda()
@@ -94,7 +93,7 @@ class Solver(object):
         total_time = str(datetime.timedelta(seconds=total_time))
         elapsed = str(datetime.timedelta(seconds=elapsed))
 
-        log = "Elapsed {}/{} -- {}, Epoch [{}/{}] Iter [{}/{}]," \
+        log = "Elapsed {}/{} -- {}, Epoch [{}/{}], Iter [{}/{}], " \
               "loss: {:.4f}".format(elapsed,
                                     epoch_time,
                                     total_time,
@@ -115,7 +114,7 @@ class Solver(object):
         """
         path = os.path.join(
             self.model_save_path,
-            '{}_{}_{}.pth'.format(self.version, e + 1, i + 1)
+            '/{}/{}--{}.pth'.format(self.version, e + 1, i + 1)
         )
         torch.save(self.model.state_dict(), path)
 
@@ -157,7 +156,7 @@ class Solver(object):
 
         # start with a trained model if exists
         if self.pretrained_model:
-            start = int(self.pretrained_model.split('_')[1]) - 1
+            start = int(self.pretrained_model.split('--')[0])
         else:
             start = 0
 
@@ -170,7 +169,7 @@ class Solver(object):
 
                 loss = self.model_step(images, labels)
 
-            # print out log loss
+            # print out loss log
             if (e + 1) % self.loss_log_step == 0:
                 self.print_loss_log(start_time, iters_per_epoch, e, i, loss)
                 self.losses.append((e, loss))
@@ -205,6 +204,7 @@ class Solver(object):
         Returns the count of top 1 and top 5 predictions
         """
 
+        # set the model to eval mode
         self.model.eval()
 
         top_1_correct = 0
@@ -240,7 +240,7 @@ class Solver(object):
         Evaluates the performance of the model using the train dataset
         """
         top_1_correct, top_5_correct, total = self.eval(self.data_loader)
-        log = "Epoch[{}/{}]--top_1_acc: {:.4f}--top_5_acc: {:.4f}".format(
+        log = "Epoch [{}/{}]--top_1_acc: {:.4f}--top_5_acc: {:.4f}".format(
             e + 1,
             self.num_epochs,
             top_1_correct / total,
