@@ -81,6 +81,10 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='34',
                         choices=['18', '34', '50', '101', '152'])
 
+    # scheduler settings
+    parser.add_argument('--sched_step_size', type=int, default=40)
+    parser.add_argument('--sched_gamma', type=float, default=0.1)
+
     # misc
     parser.add_argument('--mode', type=str, default='train',
                         choices=['train', 'test'])

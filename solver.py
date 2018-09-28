@@ -4,6 +4,7 @@ import time
 import datetime
 import torch.nn as nn
 import torch.optim as optim
+import torch.optim.lr_scheduler as scheduler
 from tqdm import tqdm
 from utils import to_var
 
@@ -50,6 +51,10 @@ class Solver(object):
                                    lr=self.lr,
                                    momentum=self.momentum,
                                    weight_decay=self.weight_decay)
+
+        self.scheduler = scheduler.StepLR(self.optimizer,
+                                          step_size=self.sched_step_size,
+                                          gamma=self.sched_gamma)
 
         # print network
         self.print_network(self.model, 'ResNet')
@@ -163,6 +168,7 @@ class Solver(object):
         # start training
         start_time = time.time()
         for e in range(start, self.num_epochs):
+            self.scheduler.step()
             for i, (images, labels) in enumerate(tqdm(self.data_loader)):
                 images = to_var(images, self.use_gpu)
                 labels = to_var(labels, self.use_gpu)
